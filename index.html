@@ -1050,10 +1050,20 @@ section, .hero, .race-hero, .cal-section, .main-section, .race-extra-section,
 .f-colophon-row {
   max-width: 1440px;
   margin: 20px auto 0;
-  padding-top: 14px;
+  padding: 14px 20px 4px;
   border-top: 1px dashed var(--rule-light);
-  display: flex;
-  justify-content: center;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.8;
+  word-break: break-word;
+}
+.f-colophon-row a {
+  color: var(--ink-3);
+  text-decoration: underline;
 }
 .f-colophon-btn {
   background: transparent;
@@ -2861,11 +2871,20 @@ body.colo-open { overflow: hidden; }
   .spotlight-card { grid-template-columns: 1fr; gap: 22px; padding: 24px 22px 22px; }
   .sl-num-large { font-size: 84px; min-width: 88px; }
   .sl-name { font-size: 32px; }
+  .sl-left { grid-column: 1; }
+  .sl-right { grid-column: 1; width: 100%; }
+  .sl-stats { grid-template-columns: 1fr 1fr; width: 100%; }
 }
 @media (max-width: 480px) {
   .spotlight-section { padding: 36px 16px 0; }
   .sl-driver-block { flex-direction: column; gap: 6px; }
   .sl-num-large { font-size: 72px; min-width: 0; }
+  .sl-right { grid-column: 1; width: 100%; }
+  .sl-stats { grid-template-columns: 1fr 1fr; width: 100%; box-sizing: border-box; }
+  .sl-stat { padding: 12px 12px 10px; }
+  .sl-stat .ss-value { font-size: 28px; }
+  .sl-form-row { flex-wrap: wrap; gap: 6px; }
+  .sl-form-pill { min-width: calc(33% - 6px); flex: 1 1 calc(33% - 6px); }
 }
 
 /* ================================================================
@@ -3412,6 +3431,120 @@ body.colo-open { overflow: hidden; }
   100% { transform: rotate(180deg) translateY(100%); }
 }
 @media (max-width: 720px) { .onb-rail { display: none; } }
+
+/* ================================================================
+   COMPREHENSIVE MOBILE LAYOUT FIXES · 390px–600px phones
+   ================================================================ */
+
+/* --- Global: prevent horizontal overflow on all sections --- */
+@media (max-width: 600px) {
+  * { box-sizing: border-box; }
+  body { overflow-x: hidden; }
+
+  /* Section padding — consistent 16px gutters */
+  .hero, .race-hero, .cal-section, .main-section,
+  .stats-ribbon, .next3-section, .spotlight-section,
+  .quali-section, .ontrack-section, .livegrid-section,
+  .footer-wrap { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* --- HERO --- */
+  .hero { padding-top: 24px; padding-bottom: 24px; }
+  .hero-top { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .hero-title .line1, .hero-title .line2 { font-size: clamp(38px, 12vw, 56px); }
+  .hero-sub { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .brand-right { text-align: left; }
+
+  /* --- RACE HERO (next race block) --- */
+  .race-block { padding: 20px 16px 22px; }
+  .race-grid { grid-template-columns: 1fr; gap: 20px; }
+  .race-name { font-size: clamp(28px, 8vw, 40px); }
+  .race-stat-row { flex-wrap: wrap; gap: 8px; }
+  .race-stat { min-width: 0; flex: 1 1 calc(50% - 8px); }
+  .race-extra-grid { grid-template-columns: 1fr !important; gap: 12px; }
+
+  /* --- COUNTDOWN --- */
+  .countdown { gap: 4px; justify-content: flex-start; }
+  .cd-cell { padding: 12px 8px 10px; min-width: 56px; }
+  .cd-num { font-size: 28px; }
+  .cd-label { font-size: 8px; }
+
+  /* --- STATS RIBBON (4 championship stats) --- */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .stat { padding: 18px 14px 16px; }
+  .stat-val { font-size: clamp(28px, 7vw, 38px); }
+  .stat:nth-child(2) { border-right: 1px solid rgba(255,255,255,0.1) !important; }
+  .stat:nth-child(3) { border-top: 1px solid rgba(255,255,255,0.1); }
+  .stat:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.1); border-right: none; }
+
+  /* --- CALENDAR STRIP --- */
+  .cal-strip-wrap { padding: 0; }
+  .cal-flag-name { font-size: 13px; }
+  .cal-item { min-width: 80px; padding: 10px 10px 12px; }
+
+  /* --- MAIN GRID (drivers + constructors + intel) --- */
+  .main-grid { grid-template-columns: 1fr !important; gap: 0; }
+  .col { border-right: none !important; border-bottom: 1px solid var(--rule-light); padding: 24px 0; }
+  .col:last-child { border-bottom: none; }
+  .col-head { position: relative !important; top: auto !important; }
+
+  /* Driver rows */
+  .driver-row { padding: 9px 0; }
+  .driver-name { font-size: 13px; }
+  .driver-pts { font-size: 15px; }
+  .driver-bar-wrap { display: none; } /* hide bar on tiny screens, clutters layout */
+
+  /* Constructor rows */
+  .con-row { padding: 9px 0; }
+
+  /* --- INTEL / NEWS ITEMS --- */
+  .intel-grid, .news-grid { grid-template-columns: 1fr !important; gap: 10px; }
+  .news-item { padding: 14px 16px; }
+
+  /* --- NEXT 3 RACES --- */
+  .next3-grid { grid-template-columns: 1fr !important; gap: 10px; }
+  .next3-card:nth-child(3) { grid-column: 1 !important; }
+  .next3-card { padding: 14px 16px 12px; }
+  .next3-card .n3-name { font-size: 18px; }
+
+  /* --- YOUR DRIVER SPOTLIGHT --- */
+  .spotlight-card {
+    grid-template-columns: 1fr !important;
+    gap: 18px;
+    padding: 20px 16px 18px !important;
+  }
+  .spotlight-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sl-left { grid-column: 1 !important; }
+  .sl-right { grid-column: 1 !important; width: 100%; }
+  .sl-driver-block { flex-direction: row; gap: 14px; align-items: flex-start; }
+  .sl-num-large { font-size: 64px !important; min-width: 70px; }
+  .sl-name { font-size: 26px !important; }
+  .sl-stats { grid-template-columns: 1fr 1fr !important; width: 100%; gap: 10px; }
+  .sl-stat { padding: 10px 12px 9px; }
+  .sl-stat .ss-value { font-size: 26px; }
+  .sl-form-row { flex-wrap: wrap; gap: 6px; }
+  .sl-form-pill { min-width: calc(33.3% - 6px); flex: 1 1 calc(33.3% - 6px); }
+  .sl-actions { flex-direction: column; gap: 8px; }
+  .sl-action { width: 100%; justify-content: center; }
+
+  /* --- FOOTER --- */
+  .footer { flex-direction: column; gap: 6px; align-items: flex-start; }
+  .f-note { font-size: 10px; }
+  .f-colophon-row { font-size: 9px; padding: 12px 16px 8px; }
+
+  /* --- LIVE INDICATOR chip --- */
+  .live-indicator { font-size: 9px; padding: 5px 10px; }
+}
+
+/* Extra small phones (≤380px) */
+@media (max-width: 380px) {
+  .hero-title .line1, .hero-title .line2 { font-size: 10vw; }
+  .cd-cell { min-width: 48px; padding: 10px 5px 8px; }
+  .cd-num { font-size: 24px; }
+  .sl-num-large { font-size: 52px !important; min-width: 58px; }
+  .sl-name { font-size: 22px !important; }
+  .sl-form-pill { min-width: calc(50% - 6px); flex: 1 1 calc(50% - 6px); }
+  .stat-val { font-size: 26px; }
+}
 </style>
 </head>
 <body>
@@ -3783,8 +3916,8 @@ body.colo-open { overflow: hidden; }
     <div class="f-note" id="fNote">Lights out and away we go</div>
     <div class="f-brand">The <em>Pit Wall</em></div>
   </footer>
-  <div class="f-colophon-row" style="text-align:center; padding: 10px 0 4px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3);">
-    Dashboard built by Revathy · Original design by <a href="https://anirudhgoel.xyz" target="_blank" rel="noopener noreferrer" style="color:var(--ink-3); text-decoration:underline;">Anirudh Goel</a> · Data via Jolpica F1 · Unofficial fan project
+  <div class="f-colophon-row">
+    Dashboard built by Revathy · Original design by <a href="https://anirudhgoel.xyz" target="_blank" rel="noopener noreferrer">Anirudh Goel</a> · Data via Jolpica F1 · Unofficial fan project
   </div>
 </div>
 
@@ -5388,18 +5521,6 @@ function applyConfig(cfg) {
   paintHeader(cfg);
   if (window.__latestData) renderAll(window.__latestData, cfg);
 }
-
-/* ================================================================
-   PRE-SEED CONFIG · Revathy + Max Verstappen
-   ================================================================ */
-(function preseed() {
-  try {
-    const KEY = 'pit-wall:v1';
-    if (!localStorage.getItem(KEY)) {
-      localStorage.setItem(KEY, JSON.stringify({ name: 'Revathy', driverCode: 'VER' }));
-    }
-  } catch(e) {}
-})();
 
 /* ================================================================
    BOOTSTRAP
