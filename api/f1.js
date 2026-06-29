@@ -25,14 +25,28 @@ function jTeam(id) { return TEAM_MAP[id] || id; }
 function jCircuit(id) { return CIRCUIT_MAP[id] || id; }
 
 async function jFetch(path) {
-  const r = await fetch(`${JOLPICA}${path}.json?limit=100`);
+  const url = `${JOLPICA}${path}.json?limit=100`;
+  const r = await fetch(url);
   if (!r.ok) throw new Error(`Jolpica ${r.status} ${path}`);
   return r.json();
 }
 
+// Walk back from current year until we find a season with race data
+async function resolveYear() {
+  const currentYear = new Date().getFullYear();
+  for (let year = currentYear; year >= currentYear - 2; year--) {
+    try {
+      const test = await jFetch(`/${year}/races`);
+      const races = test?.MRData?.RaceTable?.Races || [];
+      if (races.length > 0) return year;
+    } catch (e) { /* try next year */ }
+  }
+  return currentYear - 1; // ultimate fallback
+}
+
 // --- Driver spotlight handler ---
-async function handleDriver(driverId, res) {
-  const raw = await jFetch(`/current/drivers/${driverId}/results`);
+async function handleDriver(driverId, year, res) {
+  const raw = await jFetch(`/${year}/drivers/${driverId}/results`);
   const races = raw.MRData.RaceTable.Races || [];
   const season_results = races.map(r => {
     const result = r.Results && r.Results[0];
@@ -47,12 +61,12 @@ async function handleDriver(driverId, res) {
 }
 
 // --- Main standings handler ---
-async function handleStandings(res) {
+async function handleStandings(year, res) {
   const [schedRaw, drvRaw, conRaw, lastRaw] = await Promise.all([
-    jFetch('/current'),
-    jFetch('/current/driverStandings'),
-    jFetch('/current/constructorStandings'),
-    jFetch('/current/last/results'),
+    jFetch(`/${year}/races`),
+    jFetch(`/${year}/driverstandings`),
+    jFetch(`/${year}/constructorstandings`),
+    jFetch(`/${year}/last/results`),
   ]);
 
   // Schedule
@@ -147,6 +161,7 @@ async function handleStandings(res) {
     drivers,
     constructors,
     last_race,
+    season: year,
     _fetched_at_utc: new Date().toISOString(),
     _stale: false,
   });
@@ -158,11 +173,12 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
 
   try {
+    const year = await resolveYear();
     const { driver } = req.query;
     if (driver) {
-      return await handleDriver(driver, res);
+      return await handleDriver(driver, year, res);
     }
-    return await handleStandings(res);
+    return await handleStandings(year, res);
   } catch (err) {
     console.error('F1 proxy error:', err.message);
     return res.status(500).json({ error: err.message });
